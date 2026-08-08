@@ -2,7 +2,31 @@
 
 import { useState } from "react";
 import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
-import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X } from "lucide-react";
+import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2 } from "lucide-react";
+
+function GithubIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z" />
+    </svg>
+  );
+}
+
+function LinkedinIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
+    </svg>
+  );
+}
+
+function VercelIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L2 22h20L12 2z" />
+    </svg>
+  );
+}
 
 type Skill = {
   icon: React.ReactNode;
@@ -30,6 +54,14 @@ const skillsOutils: Skill[] = [
   { icon: <SiMysql />, label: "MySQL", type: "Système de gestion de base de données", definition: "Système de gestion de base de données relationnelle open source, très utilisé pour les applications web." },
   { icon: <SiMariadb />, label: "MariaDB", type: "Système de gestion de base de données", definition: "Système de gestion de base de données relationnelle, dérivé de MySQL, entièrement open source." },
   { icon: <HardDrive size={24} />, label: "OCS Inventory", type: "Inventaire informatique", definition: "Logiciel open source dédié à l'inventaire automatisé du matériel et des logiciels d'un parc informatique." },
+];
+
+const skillsDeploiement: Skill[] = [
+  { icon: <GitBranch size={24} />, label: "Git", type: "Outil de versioning", definition: "Système de contrôle de version distribué, utilisé pour suivre l'historique des modifications d'un projet." },
+  { icon: <GithubIcon size={24} />, label: "GitHub", type: "Plateforme d'hébergement de code", definition: "Plateforme d'hébergement de dépôts Git, utilisée pour stocker, partager et collaborer sur du code source." },
+  { icon: <VercelIcon size={24} />, label: "Vercel", type: "Plateforme de déploiement", definition: "Plateforme d'hébergement et de déploiement continu, utilisée ici pour mettre ce portfolio en ligne." },
+  { icon: <Code2 size={24} />, label: "Next.js", type: "Framework web", definition: "Framework React permettant de construire des sites et applications web modernes, avec rendu côté serveur." },
+  { icon: <Zap size={24} />, label: "Supabase", type: "Backend as a Service", definition: "Plateforme open source fournissant une base de données PostgreSQL et des services backend prêts à l'emploi." },
 ];
 
 const skillsSecurite: Skill[] = [
@@ -235,6 +267,15 @@ export default function Home() {
             </div>
 
             <div>
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils de développement</div>
+              <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
+                {skillsDeploiement.map((s) => (
+                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                ))}
+              </div>
+            </div>
+
+            <div>
               <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
               <div className="grid grid-cols-3 gap-3">
                 {skillsSecurite.map((s) => (
@@ -245,6 +286,63 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* CONTACT */}
+      <section id="contact" className="border-t border-line px-8 py-20">
+        <div className="mx-auto max-w-[1000px]">
+          <div className="mb-11 flex items-center gap-3.5">
+            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+            <h2 className="font-display text-xl font-bold">Contact</h2>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+
+          <p className="mb-10 max-w-[560px] text-base leading-relaxed text-muted">
+            N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de la sécurité informatique.
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <a href="mailto:laidani.zakariya1326@gmail.com" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
+              <Mail size={20} className="flex-shrink-0 text-accent" />
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Email</div>
+                <div className="mt-1 text-sm">laidani.zakariya1326@gmail.com</div>
+              </div>
+            </a>
+
+            <a href="tel:+33744117699" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
+              <Phone size={20} className="flex-shrink-0 text-accent" />
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Téléphone</div>
+                <div className="mt-1 text-sm">+33 7 44 11 76 99</div>
+              </div>
+            </a>
+
+            <a href="https://www.linkedin.com/in/zakariya-laidani-698b38427/" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
+              <span className="flex-shrink-0 text-accent"><LinkedinIcon size={20} /></span>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">LinkedIn</div>
+                <div className="mt-1 text-sm">Voir le profil</div>
+              </div>
+            </a>
+
+            <a href="https://github.com/zl1326" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
+              <span className="flex-shrink-0 text-accent"><GithubIcon size={20} /></span>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">GitHub</div>
+                <div className="mt-1 text-sm">Voir le profil</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-line px-8 py-8">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between font-mono text-xs text-muted">
+          <span>© 2026 Zakariya Laidani</span>
+          <span>Île-de-France</span>
+        </div>
+      </footer>
 
       {/* MODALE DEFINITION COMPETENCE */}
       {selected && (
