@@ -1,8 +1,9 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
-import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2 } from "lucide-react";
+import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
   return (
@@ -33,6 +34,14 @@ type Skill = {
   label: string;
   type: string;
   definition: string;
+};
+
+type Article = {
+  id: number;
+  title: string;
+  url: string;
+  source: string;
+  published_at: string | null;
 };
 
 const skillsLangages: Skill[] = [
@@ -82,8 +91,39 @@ function SkillTile({ skill, onSelect }: { skill: Skill; onSelect: (s: Skill) => 
   );
 }
 
+function ArticleRow({ article }: { article: Article }) {
+  return (
+    <a href={article.url} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between gap-4 border-b border-line py-5 transition-colors hover:border-accent">
+      <div className="min-w-0">
+        <div className="font-mono text-[10px] uppercase tracking-wide text-accent">{article.source}</div>
+        <div className="mt-1.5 truncate text-sm font-medium group-hover:text-accent">{article.title}</div>
+      </div>
+      <ExternalLink size={16} className="flex-shrink-0 text-muted group-hover:text-accent" />
+    </a>
+  );
+}
+
 export default function Home() {
   const [selected, setSelected] = useState<Skill | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loadingArticles, setLoadingArticles] = useState(true);
+
+  useEffect(() => {
+    async function loadArticles() {
+      const { data, error } = await supabase
+        .from("veille_articles")
+        .select("id, title, url, source, published_at")
+        .order("published_at", { ascending: false })
+        .limit(6);
+
+      if (!error && data) {
+        setArticles(data);
+      }
+      setLoadingArticles(false);
+    }
+
+    loadArticles();
+  }, []);
 
   return (
     <main>
@@ -287,6 +327,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* VEILLE */}
+      <section id="veille" className="border-t border-line px-8 py-20">
+        <div className="mx-auto max-w-[1000px]">
+          <div className="mb-11 flex items-center gap-3.5">
+            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+            <h2 className="font-display text-xl font-bold">Veille technologique</h2>
+            <span className="h-px flex-1 bg-line" />
+            <span className="font-mono text-[11px] text-muted">Mise à jour quotidienne</span>
+          </div>
+
+          {loadingArticles ? (
+            <p className="text-sm text-muted">Chargement des derniers articles...</p>
+          ) : articles.length === 0 ? (
+            <p className="text-sm text-muted">Aucun article disponible pour le moment.</p>
+          ) : (
+            <div className="flex flex-col">
+              {articles.map((article) => (
+                <ArticleRow key={article.id} article={article} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* CONTACT */}
       <section id="contact" className="border-t border-line px-8 py-20">
         <div className="mx-auto max-w-[1000px]">
@@ -296,7 +360,7 @@ export default function Home() {
             <span className="h-px flex-1 bg-line" />
           </div>
 
-          <p className="mb-10 max-w-[560px] text-base leading-relaxed text-muted">
+          <p className="mb-10 whitespace-nowrap text-base leading-relaxed text-muted">
             N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de la sécurité informatique.
           </p>
 

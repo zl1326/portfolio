@@ -13,6 +13,17 @@ const FEEDS = [
   { url: "https://krebsonsecurity.com/feed/", source: "Krebs on Security" },
 ];
 
+const TIMEOUT_MS = 15000;
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout depasse (" + ms + "ms)")), ms)
+    ),
+  ]);
+}
+
 async function run() {
   let totalInserted = 0;
 
@@ -20,7 +31,7 @@ async function run() {
     console.log("Recuperation de " + feed.source + "...");
 
     try {
-      const parsed = await parser.parseURL(feed.url);
+      const parsed = await withTimeout(parser.parseURL(feed.url), TIMEOUT_MS);
       const items = parsed.items.slice(0, 10);
 
       for (const item of items) {
@@ -45,11 +56,13 @@ async function run() {
 
       console.log(feed.source + " : " + items.length + " articles traites.");
     } catch (err) {
-      console.error("Erreur recuperation flux " + feed.source + ":", err.message);
+      console.error("Erreur ou timeout pour " + feed.source + ":", err.message);
+      console.log(feed.source + " ignore, passage au flux suivant.");
     }
   }
 
   console.log("Termine. " + totalInserted + " articles traites au total.");
+  process.exit(0);
 }
 
 run();
