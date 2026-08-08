@@ -1,4 +1,58 @@
-﻿export default function Home() {
+﻿"use client";
+
+import { useState } from "react";
+import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
+import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X } from "lucide-react";
+
+type Skill = {
+  icon: React.ReactNode;
+  label: string;
+  type: string;
+  definition: string;
+};
+
+const skillsLangages: Skill[] = [
+  { icon: <SiPython />, label: "Python", type: "Langage interprété", definition: "Langage de programmation interprété et polyvalent, orienté objet et impératif, utilisé aussi bien pour l'automatisation que l'analyse de données." },
+  { icon: <Cpu size={24} />, label: "C", type: "Langage compilé, bas niveau", definition: "Langage de programmation compilé, proche du matériel, à la base de nombreux systèmes d'exploitation et outils systèmes." },
+  { icon: <Coffee size={24} />, label: "Java", type: "Langage compilé, orienté objet", definition: "Langage de programmation orienté objet, compilé vers une machine virtuelle (JVM), largement utilisé en entreprise." },
+  { icon: <Database size={24} />, label: "SQL", type: "Langage de requête", definition: "Langage utilisé pour interroger, manipuler et structurer les données dans une base de données relationnelle." },
+  { icon: <SiPhp />, label: "PHP", type: "Langage interprété, web serveur", definition: "Langage de programmation interprété, principalement utilisé pour développer la partie serveur des sites web." },
+  { icon: <SiJavascript />, label: "JavaScript", type: "Langage interprété, web", definition: "Langage de programmation interprété, utilisé pour rendre les pages web interactives côté navigateur et côté serveur." },
+  { icon: <SiHtml5 />, label: "HTML5", type: "Langage de balisage", definition: "Langage de balisage utilisé pour structurer le contenu des pages web." },
+  { icon: <SiCss />, label: "CSS3", type: "Langage de style", definition: "Langage utilisé pour mettre en forme et styliser l'apparence des pages web." },
+];
+
+const skillsOutils: Skill[] = [
+  { icon: <SiLinux />, label: "Linux", type: "Système d'exploitation", definition: "Système d'exploitation open source basé sur le noyau Linux, largement utilisé sur les serveurs et en cybersécurité." },
+  { icon: <Network size={24} />, label: "Active Directory", type: "Service d'annuaire", definition: "Service d'annuaire développé par Microsoft, utilisé pour gérer les utilisateurs et les ressources d'un réseau d'entreprise." },
+  { icon: <SiVirtualbox />, label: "VirtualBox", type: "Logiciel de virtualisation", definition: "Logiciel de virtualisation permettant d'exécuter plusieurs systèmes d'exploitation sur une même machine physique." },
+  { icon: <Boxes size={24} />, label: "GLPI", type: "Gestion de parc informatique", definition: "Logiciel open source de gestion de parc informatique et de support technique (tickets, inventaire)." },
+  { icon: <SiMysql />, label: "MySQL", type: "Système de gestion de base de données", definition: "Système de gestion de base de données relationnelle open source, très utilisé pour les applications web." },
+  { icon: <SiMariadb />, label: "MariaDB", type: "Système de gestion de base de données", definition: "Système de gestion de base de données relationnelle, dérivé de MySQL, entièrement open source." },
+  { icon: <HardDrive size={24} />, label: "OCS Inventory", type: "Inventaire informatique", definition: "Logiciel open source dédié à l'inventaire automatisé du matériel et des logiciels d'un parc informatique." },
+];
+
+const skillsSecurite: Skill[] = [
+  { icon: <FileSearch size={24} />, label: "Analyse de logs", type: "Pratique de sécurité", definition: "Pratique consistant à examiner les journaux système pour détecter des anomalies ou des incidents de sécurité." },
+  { icon: <ShieldAlert size={24} />, label: "Détection d'intrusion", type: "Pratique de sécurité", definition: "Ensemble de techniques visant à repérer les tentatives d'accès non autorisé à un système ou un réseau." },
+  { icon: <Radar size={24} />, label: "Veille technologique", type: "Pratique professionnelle", definition: "Suivi régulier de l'actualité et des évolutions technologiques dans un domaine donné, ici la cybersécurité." },
+];
+
+function SkillTile({ skill, onSelect }: { skill: Skill; onSelect: (s: Skill) => void }) {
+  return (
+    <button
+      onClick={() => onSelect(skill)}
+      className="clip-corner-sm flex flex-col items-center gap-3 border border-line bg-panel px-4 py-6 text-center transition-colors hover:border-accent"
+    >
+      <span className="text-2xl text-muted">{skill.icon}</span>
+      <span className="text-xs text-muted">{skill.label}</span>
+    </button>
+  );
+}
+
+export default function Home() {
+  const [selected, setSelected] = useState<Skill | null>(null);
+
   return (
     <main>
       {/* HEADER */}
@@ -151,6 +205,73 @@
           </div>
         </div>
       </section>
+
+      {/* COMPETENCES */}
+      <section id="competences" className="border-t border-line px-8 py-20">
+        <div className="mx-auto max-w-[1000px]">
+          <div className="mb-11 flex items-center gap-3.5">
+            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+            <h2 className="font-display text-xl font-bold">Compétences</h2>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+
+          <div className="flex flex-col gap-10">
+            <div>
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Langages</div>
+              <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
+                {skillsLangages.map((s) => (
+                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils &amp; systèmes</div>
+              <div className="grid grid-cols-4 gap-3 sm:grid-cols-7">
+                {skillsOutils.map((s) => (
+                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
+              <div className="grid grid-cols-3 gap-3">
+                {skillsSecurite.map((s) => (
+                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MODALE DEFINITION COMPETENCE */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="clip-corner relative w-full max-w-[420px] border border-line bg-panel p-7"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelected(null)}
+              className="absolute right-4 top-4 text-muted hover:text-text"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl text-accent">{selected.icon}</span>
+              <h3 className="font-display text-xl font-bold">{selected.label}</h3>
+            </div>
+            <div className="mt-3 font-mono text-[11px] uppercase tracking-wide text-accent">{selected.type}</div>
+            <p className="mt-4 text-sm leading-relaxed text-muted">{selected.definition}</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
