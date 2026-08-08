@@ -13,6 +13,8 @@ const FEEDS = [
   { url: "https://krebsonsecurity.com/feed/", source: "Krebs on Security" },
 ];
 
+const ARTICLES_PAR_SOURCE = 2;
+const INTERVALLE_JOURS = 21;
 const TIMEOUT_MS = 15000;
 
 function withTimeout(promise, ms) {
@@ -24,7 +26,45 @@ function withTimeout(promise, ms) {
   ]);
 }
 
+async function doitRecuperer() {
+  const { data, error } = await supabase
+    .from("veille_articles")
+    .select("fetched_at")
+    .order("fetched_at", { ascending: false })
+    .limit(1);
+
+  if (error) {
+    console.error("Erreur lors de la verification de la derniere recuperation:", error.message);
+    return true;
+  }
+
+  if (!data || data.length === 0) {
+    console.log("Aucun article existant, premiere recuperation.");
+    return true;
+  }
+
+  const derniereDate = new Date(data[0].fetched_at);
+  const maintenant = new Date();
+  const joursEcoules = (maintenant - derniereDate) / (1000 * 60 * 60 * 24);
+
+  console.log("Derniere recuperation il y a " + joursEcoules.toFixed(1) + " jours.");
+
+  if (joursEcoules < INTERVALLE_JOURS) {
+    console.log("Moins de " + INTERVALLE_JOURS + " jours ecoules, on garde les articles actuels.");
+    return false;
+  }
+
+  return true;
+}
+
 async function run() {
+  const recupererAujourdhui = await doitRecuperer();
+
+  if (!recupererAujourdhui) {
+    console.log("Rien a faire aujourd'hui.");
+    return;
+  }
+
   let totalInserted = 0;
 
   for (const feed of FEEDS) {
@@ -32,7 +72,7 @@ async function run() {
 
     try {
       const parsed = await withTimeout(parser.parseURL(feed.url), TIMEOUT_MS);
-      const items = parsed.items.slice(0, 10);
+      const items = parsed.items.slice(0, ARTICLES_PAR_SOURCE);
 
       for (const item of items) {
         const { error } = await supabase
@@ -62,7 +102,8 @@ async function run() {
   }
 
   console.log("Termine. " + totalInserted + " articles traites au total.");
-  process.exit(0);
 }
 
-run();
+run().finally(() => {
+  process.exitCode = 0;
+});
