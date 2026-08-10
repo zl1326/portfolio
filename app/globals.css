@@ -3,11 +3,11 @@
 @theme {
   --color-bg: #0c0d0f;
   --color-panel: #141517;
-  --color-line: rgba(255, 255, 255, 0.09);
+  --color-line: rgba(255,255,255,0.1);
   --color-text: #eceae4;
-  --color-muted: #787c82;
-  --color-accent: #a8adb4;
-  --color-steel: #39424e;
+  --color-muted: #888d93;
+  --color-accent: #7fa8c9;
+  --color-steel: #4a5a6b;
 
   --font-display: var(--font-display), sans-serif;
   --font-mono: var(--font-mono), monospace;
@@ -18,25 +18,10 @@ body {
   color: var(--color-text);
 }
 
-/* Coin biseauté réutilisable, à appliquer sur boutons, cartes, badges */
 .clip-corner {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 14px) 0,
-    100% 14px,
-    100% 100%,
-    14px 100%,
-    0 calc(100% - 14px)
-  );
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
 
 .clip-corner-sm {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 8px) 0,
-    100% 8px,
-    100% 100%,
-    8px 100%,
-    0 calc(100% - 8px)
-  );
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
-import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink } from "lucide-react";
+import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink, FileCode, Download } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
@@ -42,6 +42,7 @@ type Article = {
   url: string;
   source: string;
   published_at: string | null;
+  fetched_at: string;
 };
 
 const skillsLangages: Skill[] = [
@@ -66,6 +67,7 @@ const skillsOutils: Skill[] = [
 ];
 
 const skillsDeploiement: Skill[] = [
+  { icon: <FileCode size={24} />, label: "VS Code", type: "Éditeur de code", definition: "Éditeur de code source léger et extensible, utilisé au quotidien pour l'ensemble des projets de développement." },
   { icon: <GitBranch size={24} />, label: "Git", type: "Outil de versioning", definition: "Système de contrôle de version distribué, utilisé pour suivre l'historique des modifications d'un projet." },
   { icon: <GithubIcon size={24} />, label: "GitHub", type: "Plateforme d'hébergement de code", definition: "Plateforme d'hébergement de dépôts Git, utilisée pour stocker, partager et collaborer sur du code source." },
   { icon: <VercelIcon size={24} />, label: "Vercel", type: "Plateforme de déploiement", definition: "Plateforme d'hébergement et de déploiement continu, utilisée ici pour mettre ce portfolio en ligne." },
@@ -83,9 +85,9 @@ function SkillTile({ skill, onSelect }: { skill: Skill; onSelect: (s: Skill) => 
   return (
     <button
       onClick={() => onSelect(skill)}
-      className="clip-corner-sm flex flex-col items-center gap-3 border border-line bg-panel px-4 py-6 text-center transition-colors hover:border-accent"
+      className="clip-corner-sm flex flex-col items-center gap-3 border border-line bg-panel px-4 py-6 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_6px_16px_rgba(127,168,201,0.12)]"
     >
-      <span className="text-2xl text-muted">{skill.icon}</span>
+      <span className="text-2xl text-accent">{skill.icon}</span>
       <span className="text-xs text-muted">{skill.label}</span>
     </button>
   );
@@ -103,6 +105,14 @@ function ArticleRow({ article }: { article: Article }) {
   );
 }
 
+function formatDateFr(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default function Home() {
   const [selected, setSelected] = useState<Skill | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -112,7 +122,7 @@ export default function Home() {
     async function loadArticles() {
       const { data, error } = await supabase
         .from("veille_articles")
-        .select("id, title, url, source, published_at")
+        .select("id, title, url, source, published_at, fetched_at")
         .order("published_at", { ascending: false })
         .limit(6);
 
@@ -125,6 +135,10 @@ export default function Home() {
     loadArticles();
   }, []);
 
+  const lastUpdate = articles.length
+    ? articles.reduce((latest, a) => (a.fetched_at > latest ? a.fetched_at : latest), articles[0].fetched_at)
+    : null;
+
   return (
     <main>
       {/* HEADER */}
@@ -135,19 +149,19 @@ export default function Home() {
             Zakariya Laidani
           </div>
           <nav className="hidden gap-8 sm:flex">
-            <a href="#apropos" className="text-sm text-muted hover:text-text">À propos</a>
-            <a href="#parcours" className="text-sm text-muted hover:text-text">Parcours</a>
-            <a href="#projets" className="text-sm text-muted hover:text-text">Projets</a>
-            <a href="#competences" className="text-sm text-muted hover:text-text">Compétences</a>
-            <a href="#veille" className="text-sm text-muted hover:text-text">Veille</a>
+            <a href="#apropos" className="text-sm text-muted hover:text-accent">À propos</a>
+            <a href="#parcours" className="text-sm text-muted hover:text-accent">Parcours</a>
+            <a href="#projets" className="text-sm text-muted hover:text-accent">Projets</a>
+            <a href="#competences" className="text-sm text-muted hover:text-accent">Compétences</a>
+            <a href="#veille" className="text-sm text-muted hover:text-accent">Veille</a>
           </nav>
-          <a href="#contact" className="clip-corner-sm border border-line px-4 py-2 font-mono text-xs hover:border-accent">Contact</a>
+          <a href="#contact" className="clip-corner-sm border border-accent px-4 py-2 font-mono text-xs text-accent hover:bg-accent hover:text-bg">Contact</a>
         </div>
       </header>
 
       {/* HERO */}
       <section className="mx-auto max-w-[1000px] px-8 pt-28 pb-14 text-center">
-        <div className="mb-7 inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-wide text-muted">
+        <div className="mb-7 inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-wide text-accent">
           <span className="h-px w-4 bg-steel" />
           Étudiant en informatique - Systèmes et sécurité
           <span className="h-px w-4 bg-steel" />
@@ -161,8 +175,8 @@ export default function Home() {
           L2 Informatique à l'Université Paris 8, dans le cadre d'une formation visant, sur le long terme, une carrière en cybersécurité.
         </p>
         <div className="mt-9 flex justify-center gap-3.5">
-          <a href="/cv.pdf" className="clip-corner bg-text px-7 py-3.5 font-semibold text-bg">Télécharger le CV</a>
-          <a href="#projets" className="clip-corner border border-line px-7 py-3.5 font-semibold hover:border-steel">Voir les projets</a>
+          <a href="/cv.pdf" className="clip-corner bg-accent px-7 py-3.5 font-semibold text-bg">Télécharger le CV</a>
+          <a href="#projets" className="clip-corner border border-line px-7 py-3.5 font-semibold hover:border-accent hover:text-accent">Voir les projets</a>
         </div>
       </section>
 
@@ -188,7 +202,7 @@ export default function Home() {
             <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
             <h2 className="font-display text-xl font-bold">Parcours</h2>
             <span className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[11px] text-muted">03 / 04</span>
+            <span className="font-mono text-[11px] text-muted">04 / 05</span>
           </div>
 
           <p className="mb-10 whitespace-nowrap text-sm leading-relaxed text-muted">
@@ -196,14 +210,15 @@ export default function Home() {
           </p>
 
           <div className="mb-16 flex gap-1.5">
-            <span className="h-[3px] flex-1 bg-steel" />
-            <span className="h-[3px] flex-1 bg-steel" />
             <span className="h-[3px] flex-1 bg-accent" />
+            <span className="h-[3px] flex-1 bg-accent" />
+            <span className="h-[3px] flex-1 bg-accent" />
+            <span className="h-[3px] flex-1 bg-line" />
             <span className="h-[3px] flex-1 bg-line" />
           </div>
 
           <div className="relative">
-            <div className="absolute left-[7px] top-2 bottom-2 w-[3px] bg-gradient-to-b from-steel via-steel to-transparent" />
+            <div className="absolute left-[7px] top-2 bottom-2 w-[3px] bg-gradient-to-b from-accent via-steel to-transparent" />
 
             <div className="relative flex gap-8 pb-14 pl-9">
               <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
@@ -224,7 +239,7 @@ export default function Home() {
             </div>
 
             <div className="relative flex gap-8 pb-14 pl-9">
-              <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(168,173,180,0.5)]" />
+              <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(127,168,201,0.5)]" />
               <div>
                 <div className="font-display text-3xl font-bold text-accent">2025 — 2026</div>
                 <div className="mt-1.5 text-lg font-semibold">L2 Informatique — IED, Université Paris 8</div>
@@ -232,11 +247,20 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative flex gap-8 pl-9 opacity-60">
+            <div className="relative flex gap-8 pb-14 pl-9 opacity-60">
               <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
               <div>
                 <div className="font-display text-2xl font-bold text-muted">Prochaine étape</div>
                 <div className="mt-1.5 text-base font-semibold text-muted">L3 Informatique</div>
+                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
+              </div>
+            </div>
+
+            <div className="relative flex gap-8 pl-9 opacity-60">
+              <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
+              <div>
+                <div className="font-display text-2xl font-bold text-muted">Ensuite</div>
+                <div className="mt-1.5 text-base font-semibold text-muted">Master en Cybersécurité</div>
                 <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
               </div>
             </div>
@@ -254,26 +278,61 @@ export default function Home() {
             <span className="font-mono text-[11px] text-muted">github.com/zl1326</span>
           </div>
 
-          <div className="clip-corner border border-line bg-panel p-7">
-            <div className="font-mono text-[10px] uppercase tracking-wide text-accent">Sécurité</div>
-            <h3 className="mt-3 font-display text-xl font-bold">Log Sentinel</h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted">
-              Outil Python d'analyse de logs et de détection d'intrusion. Il parse des logs SSH, Apache et pare-feu, applique des règles de détection (bruteforce, scan de ports, user-agents suspects, scan de chemins) et affiche les alertes sur un dashboard en temps réel.
-            </p>
+          <div className="flex flex-col gap-14">
+            <div>
+              <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
+              <div className="flex flex-col gap-6">
+                <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
+                  <h3 className="font-display text-xl font-bold">Log Sentinel</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                    Outil Python d'analyse de logs et de détection d'intrusion. Il parse des logs SSH, Apache et pare-feu, applique des règles de détection (bruteforce, scan de ports, user-agents suspects, scan de chemins) et affiche les alertes sur un dashboard en temps réel.
+                  </p>
 
-            <div className="mt-5 flex gap-6 font-mono text-xs">
-              <a href="https://github.com/zl1326/log-sentinel" target="_blank" rel="noopener noreferrer" className="border-b border-line pb-0.5 hover:border-accent hover:text-accent">Code source</a>
+                  <div className="mt-5 flex gap-6 font-mono text-xs">
+                    <a href="https://github.com/zl1326/log-sentinel" target="_blank" rel="noopener noreferrer" className="border-b border-accent pb-0.5 text-accent hover:opacity-70">Code source</a>
+                  </div>
+
+                  <details className="group mt-6 border-t border-line pt-5">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
+                      <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                      Lire le rapport du projet
+                    </summary>
+                    <div className="mt-4 clip-corner-sm border border-line">
+                      <iframe src="/pdf/log-sentinel-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport Log Sentinel" />
+                    </div>
+                  </details>
+                </div>
+              </div>
             </div>
 
-            <details className="group mt-6 border-t border-line pt-5">
-              <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-text">
-                <span className="inline-block transition-transform group-open:rotate-90">▸</span>
-                Lire le rapport du projet
-              </summary>
-              <div className="mt-4 clip-corner-sm border border-line">
-                <iframe src="/pdf/log-sentinel-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport Log Sentinel" />
+            <div>
+              <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Systèmes</div>
+              <div className="flex flex-col gap-6">
+                <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
+                  <h3 className="font-display text-xl font-bold">MinishellSE</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                    Mini-shell développé en C dans le cadre du projet final du cours de Systèmes d'Exploitation (IED Paris 8). Il intègre les commandes internes moncd, monexit et exit, la gestion des redirections d'entrée-sortie, des pipes, de l'exécution en arrière-plan, ainsi que l'auto-complétion des noms de fichiers en bonus.
+                  </p>
+
+                  <div className="mt-5 flex gap-6 font-mono text-xs">
+                    <a href="/downloads/MinishellSE.zip" download className="flex items-center gap-1.5 border-b border-accent pb-0.5 text-accent hover:opacity-70">
+                      <Download size={13} />
+                      Télécharger le projet
+                    </a>
+                  </div>
+
+                  <details className="group mt-6 border-t border-line pt-5">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
+                      <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                      Lire le rapport du projet
+                    </summary>
+                    <div className="mt-4 clip-corner-sm border border-line">
+                      <iframe src="/pdf/minishellse-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport MinishellSE" />
+                    </div>
+                  </details>
+                </div>
               </div>
-            </details>
+            </div>
           </div>
         </div>
       </section>
@@ -308,7 +367,7 @@ export default function Home() {
 
             <div>
               <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils de développement</div>
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
+              <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
                 {skillsDeploiement.map((s) => (
                   <SkillTile key={s.label} skill={s} onSelect={setSelected} />
                 ))}
@@ -330,12 +389,17 @@ export default function Home() {
       {/* VEILLE */}
       <section id="veille" className="border-t border-line px-8 py-20">
         <div className="mx-auto max-w-[1000px]">
-          <div className="mb-11 flex items-center gap-3.5">
+          <div className="mb-3 flex items-center gap-3.5">
             <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
             <h2 className="font-display text-xl font-bold">Veille technologique</h2>
             <span className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[11px] text-muted">Mise à jour quotidienne</span>
           </div>
+
+          {lastUpdate && (
+            <div className="mb-9 font-mono text-[11px] uppercase tracking-wide text-accent">
+              Dernière MAJ : {formatDateFr(lastUpdate)}
+            </div>
+          )}
 
           {loadingArticles ? (
             <p className="text-sm text-muted">Chargement des derniers articles...</p>
@@ -361,36 +425,36 @@ export default function Home() {
           </div>
 
           <p className="mb-10 whitespace-nowrap text-base leading-relaxed text-muted">
-            N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de la sécurité informatique.
+            N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de mon profil.
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <a href="mailto:laidani.zakariya1326@gmail.com" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
-              <Mail size={20} className="flex-shrink-0 text-accent" />
-              <div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <a href="mailto:laidani.zakariya1326@gmail.com" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+              <Mail size={22} className="flex-shrink-0 text-accent" />
+              <div className="min-w-0">
                 <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Email</div>
-                <div className="mt-1 text-sm">laidani.zakariya1326@gmail.com</div>
+                <div className="mt-1 break-all text-sm">laidani.zakariya1326@gmail.com</div>
               </div>
             </a>
 
-            <a href="tel:+33744117699" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
-              <Phone size={20} className="flex-shrink-0 text-accent" />
+            <a href="tel:+33744117699" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+              <Phone size={22} className="flex-shrink-0 text-accent" />
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Téléphone</div>
                 <div className="mt-1 text-sm">+33 7 44 11 76 99</div>
               </div>
             </a>
 
-            <a href="https://www.linkedin.com/in/zakariya-laidani-698b38427/" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
-              <span className="flex-shrink-0 text-accent"><LinkedinIcon size={20} /></span>
+            <a href="https://www.linkedin.com/in/zakariya-laidani-698b38427/" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+              <span className="flex-shrink-0 text-accent"><LinkedinIcon size={22} /></span>
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-wide text-muted">LinkedIn</div>
                 <div className="mt-1 text-sm">Voir le profil</div>
               </div>
             </a>
 
-            <a href="https://github.com/zl1326" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-5 py-5 transition-colors hover:border-accent">
-              <span className="flex-shrink-0 text-accent"><GithubIcon size={20} /></span>
+            <a href="https://github.com/zl1326" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+              <span className="flex-shrink-0 text-accent"><GithubIcon size={22} /></span>
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-wide text-muted">GitHub</div>
                 <div className="mt-1 text-sm">Voir le profil</div>
@@ -420,7 +484,7 @@ export default function Home() {
           >
             <button
               onClick={() => setSelected(null)}
-              className="absolute right-4 top-4 text-muted hover:text-text"
+              className="absolute right-4 top-4 text-muted hover:text-accent"
               aria-label="Fermer"
             >
               <X size={18} />
