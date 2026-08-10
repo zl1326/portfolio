@@ -14,8 +14,13 @@
 }
 
 body {
-  background: var(--color-bg);
   color: var(--color-text);
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse 900px 550px at 50% -5%, rgba(127,168,201,0.32), transparent 65%),
+    radial-gradient(ellipse 700px 500px at 100% 30%, rgba(127,168,201,0.16), transparent 70%),
+    radial-gradient(ellipse 600px 450px at 0% 70%, rgba(127,168,201,0.13), transparent 70%);
+  background-attachment: fixed;
 }
 
 .clip-corner {
