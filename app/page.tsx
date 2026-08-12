@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
-import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink, FileCode, Download } from "lucide-react";
+import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink, FileCode, Download, User, History, FolderGit2, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
@@ -45,6 +45,60 @@ type Article = {
   fetched_at: string;
 };
 
+const navItems = [
+  { href: "#apropos", label: "À propos", icon: User },
+  { href: "#parcours", label: "Parcours", icon: History },
+  { href: "#projets", label: "Projets", icon: FolderGit2 },
+  { href: "#competences", label: "Compétences", icon: SlidersHorizontal },
+  { href: "#veille", label: "Veille", icon: Radar },
+  { href: "#contact", label: "Contact", icon: Mail },
+];
+
+const ITEM_H = 44;
+const ITEM_GAP = 6;
+const STEP = ITEM_H + ITEM_GAP;
+
+function Sidebar() {
+  const [open, setOpen] = useState(false);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
+  return (
+    <aside
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => { setOpen(false); setHoverIndex(null); }}
+      className={"fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col border border-line bg-bg/85 py-2.5 backdrop-blur-md transition-all duration-300 ease-out sm:flex " + (open ? "w-52 px-2.5" : "w-12 px-1.5")}
+      style={{ clipPath: "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))" }}
+    >
+      <div className="relative flex flex-col" style={{ gap: ITEM_GAP }}>
+        {hoverIndex !== null && (
+          <div
+            className="absolute left-0 w-full bg-panel transition-all duration-300 ease-out"
+            style={{
+              height: ITEM_H,
+              top: hoverIndex * STEP,
+              clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+            }}
+          />
+        )}
+
+        {navItems.map((item, i) => {
+          const Icon = item.icon;
+          return (
+            <a key={item.href} href={item.href} onMouseEnter={() => setHoverIndex(i)} className="relative z-10 flex items-center gap-3 overflow-hidden text-accent transition-colors duration-200 hover:text-text" style={{ height: ITEM_H }}>
+              <span className="flex w-9 flex-shrink-0 items-center justify-center">
+                <Icon size={17} />
+              </span>
+              <span className={"overflow-hidden whitespace-nowrap text-sm transition-all duration-300 " + (open ? "max-w-[140px] opacity-100" : "max-w-0 opacity-0")}>
+                {item.label}
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </aside>
+  );
+}
+
 const skillsLangages: Skill[] = [
   { icon: <SiPython />, label: "Python", type: "Langage interprété", definition: "Langage de programmation interprété et polyvalent, orienté objet et impératif, utilisé aussi bien pour l'automatisation que l'analyse de données." },
   { icon: <Cpu size={24} />, label: "C", type: "Langage compilé, bas niveau", definition: "Langage de programmation compilé, proche du matériel, à la base de nombreux systèmes d'exploitation et outils systèmes." },
@@ -83,10 +137,7 @@ const skillsSecurite: Skill[] = [
 
 function SkillTile({ skill, onSelect }: { skill: Skill; onSelect: (s: Skill) => void }) {
   return (
-    <button
-      onClick={() => onSelect(skill)}
-      className="clip-corner-sm flex flex-col items-center gap-3 border border-line bg-panel px-4 py-6 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_6px_16px_rgba(127,168,201,0.12)]"
-    >
+    <button onClick={() => onSelect(skill)} className="clip-corner-sm flex flex-col items-center gap-3 border border-line bg-panel px-4 py-6 text-center transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_6px_16px_rgba(127,168,201,0.12)]">
       <span className="text-2xl text-accent">{skill.icon}</span>
       <span className="text-xs text-muted">{skill.label}</span>
     </button>
@@ -140,364 +191,340 @@ export default function Home() {
     : null;
 
   return (
-    <main>
-      {/* HEADER */}
-      <header className="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-8 py-6">
-          <div className="flex items-center gap-2.5 font-display font-semibold text-sm">
-            <span className="h-2 w-2 bg-accent clip-corner-sm" />
-            Zakariya Laidani
+    <>
+      <Sidebar />
+      <main className="sm:pl-24">
+        <header className="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur-md sm:hidden">
+          <div className="mx-auto flex max-w-[1000px] items-center justify-between px-8 py-6">
+            <div className="flex items-center gap-2.5 font-display font-semibold text-sm text-accent">
+              <span className="h-2 w-2 bg-accent clip-corner-sm" />
+              Zakariya Laidani
+            </div>
+            <a href="#contact" className="clip-corner-sm border border-accent px-4 py-2 font-mono text-xs text-accent hover:bg-accent hover:text-bg">Contact</a>
           </div>
-          <nav className="hidden gap-8 sm:flex">
-            <a href="#apropos" className="text-sm text-muted hover:text-accent">À propos</a>
-            <a href="#parcours" className="text-sm text-muted hover:text-accent">Parcours</a>
-            <a href="#projets" className="text-sm text-muted hover:text-accent">Projets</a>
-            <a href="#competences" className="text-sm text-muted hover:text-accent">Compétences</a>
-            <a href="#veille" className="text-sm text-muted hover:text-accent">Veille</a>
-          </nav>
-          <a href="#contact" className="clip-corner-sm border border-accent px-4 py-2 font-mono text-xs text-accent hover:bg-accent hover:text-bg">Contact</a>
-        </div>
-      </header>
+        </header>
 
-      {/* HERO */}
-      <section className="mx-auto max-w-[1000px] px-8 pt-28 pb-14 text-center">
-        <div className="mb-7 inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-wide text-accent">
-          <span className="h-px w-4 bg-steel" />
-          Étudiant en informatique - Systèmes et sécurité
-          <span className="h-px w-4 bg-steel" />
-        </div>
-        <h1 className="font-display text-5xl font-bold leading-tight tracking-tight sm:text-6xl">
-          Étudiant en informatique,
-          <br />
-          <span className="font-normal text-muted">orienté systèmes et sécurité.</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-[500px] text-base leading-relaxed text-muted">
-          L2 Informatique à l'Université Paris 8, dans le cadre d'une formation visant, sur le long terme, une carrière en cybersécurité.
-        </p>
-        <div className="mt-9 flex justify-center gap-3.5">
-          <a href="/cv.pdf" className="clip-corner bg-accent px-7 py-3.5 font-semibold text-bg">Télécharger le CV</a>
-          <a href="#projets" className="clip-corner border border-line px-7 py-3.5 font-semibold hover:border-accent hover:text-accent">Voir les projets</a>
-        </div>
-      </section>
-
-      {/* A PROPOS */}
-      <section id="apropos" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-11 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">À propos</h2>
-            <span className="h-px flex-1 bg-line" />
+        <section className="mx-auto max-w-[1000px] px-8 pt-16 pb-14 text-center sm:pt-28">
+          <div className="mb-7 inline-flex items-center gap-2.5 font-mono text-xs uppercase tracking-wide text-accent">
+            <span className="h-px w-4 bg-steel" />
+            Étudiant en informatique - Systèmes et sécurité
+            <span className="h-px w-4 bg-steel" />
           </div>
-
-          <p className="max-w-[720px] text-base leading-relaxed text-muted">
-            Je suis étudiant en informatique en Île-de-France, en L2 après avoir validé un BTS SIO option SISR. Mon intérêt pour la cybersécurité est né d'une expérience concrète, car en construisant et en dépannant mes propres machines, j'ai appris à chercher les causes profondes des problèmes plutôt que de me contenter de solutions superficielles. C'est cette même approche que j'applique à mes projets, avec l'ambition, à terme, de devenir responsable de la sécurité des systèmes d'information.
+          <h1 className="font-display text-5xl font-bold leading-tight tracking-tight sm:text-6xl">
+            Étudiant en informatique,
+            <br />
+            <span className="font-normal text-muted">orienté systèmes et sécurité.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-[500px] text-base leading-relaxed text-muted">
+            L2 Informatique à l'Université Paris 8, dans le cadre d'une formation visant, sur le long terme, une carrière en cybersécurité.
           </p>
-        </div>
-      </section>
-
-      {/* PARCOURS */}
-      <section id="parcours" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-4 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">Parcours</h2>
-            <span className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[11px] text-muted">04 / 05</span>
+          <div className="mt-9 flex justify-center gap-3.5">
+            <a href="/cv.pdf" className="clip-corner bg-accent px-7 py-3.5 font-semibold text-bg">Télécharger le CV</a>
+            <a href="#projets" className="clip-corner border border-line px-7 py-3.5 font-semibold hover:border-accent hover:text-accent">Voir les projets</a>
           </div>
+        </section>
 
-          <p className="mb-10 whitespace-nowrap text-sm leading-relaxed text-muted">
-            Chaque étape de ce parcours a renforcé mon orientation vers la sécurité informatique.
-          </p>
+        <section id="apropos" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-11 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">À propos</h2>
+              <span className="h-px flex-1 bg-line" />
+            </div>
 
-          <div className="mb-16 flex gap-1.5">
-            <span className="h-[3px] flex-1 bg-accent" />
-            <span className="h-[3px] flex-1 bg-accent" />
-            <span className="h-[3px] flex-1 bg-accent" />
-            <span className="h-[3px] flex-1 bg-line" />
-            <span className="h-[3px] flex-1 bg-line" />
+            <p className="max-w-[720px] text-base leading-relaxed text-muted">
+              Je suis étudiant en informatique en Île-de-France, en L2 après avoir validé un BTS SIO option SISR. Mon intérêt pour la cybersécurité est né d'une expérience concrète, car en construisant et en dépannant mes propres machines, j'ai appris à chercher les causes profondes des problèmes plutôt que de me contenter de solutions superficielles. C'est cette même approche que j'applique à mes projets, avec l'ambition, à terme, de devenir responsable de la sécurité des systèmes d'information.
+            </p>
           </div>
+        </section>
 
-          <div className="relative">
-            <div className="absolute left-[7px] top-2 bottom-2 w-[3px] bg-gradient-to-b from-accent via-steel to-transparent" />
-
-            <div className="relative flex gap-8 pb-14 pl-9">
-              <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
-              <div>
-                <div className="font-display text-2xl font-bold text-text">2022 — 2023</div>
-                <div className="mt-1.5 text-base font-semibold">Terminale STMG, spécialité SIG</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">CNED · Validé</div>
-              </div>
+        <section id="parcours" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-4 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Parcours</h2>
+              <span className="h-px flex-1 bg-line" />
+              <span className="font-mono text-[11px] text-muted">04 / 05</span>
             </div>
 
-            <div className="relative flex gap-8 pb-14 pl-9">
-              <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
-              <div>
-                <div className="font-display text-2xl font-bold text-text">2023 — 2025</div>
-                <div className="mt-1.5 text-base font-semibold">BTS SIO, option SISR</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">Validé</div>
-              </div>
+            <p className="mb-10 whitespace-nowrap text-sm leading-relaxed text-muted">
+              Chaque étape de ce parcours a renforcé mon orientation vers la sécurité informatique.
+            </p>
+
+            <div className="mb-16 flex gap-1.5">
+              <span className="h-[3px] flex-1 bg-accent" />
+              <span className="h-[3px] flex-1 bg-accent" />
+              <span className="h-[3px] flex-1 bg-accent" />
+              <span className="h-[3px] flex-1 bg-line" />
+              <span className="h-[3px] flex-1 bg-line" />
             </div>
 
-            <div className="relative flex gap-8 pb-14 pl-9">
-              <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(127,168,201,0.5)]" />
-              <div>
-                <div className="font-display text-3xl font-bold text-accent">2025 — 2026</div>
-                <div className="mt-1.5 text-lg font-semibold">L2 Informatique — IED, Université Paris 8</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-accent">En cours</div>
-              </div>
-            </div>
+            <div className="relative">
+              <div className="absolute left-[7px] top-2 bottom-2 w-[3px] bg-gradient-to-b from-accent via-steel to-transparent" />
 
-            <div className="relative flex gap-8 pb-14 pl-9 opacity-60">
-              <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
-              <div>
-                <div className="font-display text-2xl font-bold text-muted">Prochaine étape</div>
-                <div className="mt-1.5 text-base font-semibold text-muted">L3 Informatique</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
-              </div>
-            </div>
-
-            <div className="relative flex gap-8 pl-9 opacity-60">
-              <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
-              <div>
-                <div className="font-display text-2xl font-bold text-muted">Ensuite</div>
-                <div className="mt-1.5 text-base font-semibold text-muted">Master en Cybersécurité</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROJETS */}
-      <section id="projets" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-11 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">Projets</h2>
-            <span className="h-px flex-1 bg-line" />
-            <span className="font-mono text-[11px] text-muted">github.com/zl1326</span>
-          </div>
-
-          <div className="flex flex-col gap-14">
-            <div>
-              <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
-              <div className="flex flex-col gap-6">
-                <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
-                  <h3 className="font-display text-xl font-bold">Log Sentinel</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted">
-                    Outil Python d'analyse de logs et de détection d'intrusion. Il parse des logs SSH, Apache et pare-feu, applique des règles de détection (bruteforce, scan de ports, user-agents suspects, scan de chemins) et affiche les alertes sur un dashboard en temps réel.
-                  </p>
-
-                  <div className="mt-5 flex gap-6 font-mono text-xs">
-                    <a href="https://github.com/zl1326/log-sentinel" target="_blank" rel="noopener noreferrer" className="border-b border-accent pb-0.5 text-accent hover:opacity-70">Code source</a>
-                  </div>
-
-                  <details className="group mt-6 border-t border-line pt-5">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
-                      <span className="inline-block transition-transform group-open:rotate-90">▸</span>
-                      Lire le rapport du projet
-                    </summary>
-                    <div className="mt-4 clip-corner-sm border border-line">
-                      <iframe src="/pdf/log-sentinel-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport Log Sentinel" />
-                    </div>
-                  </details>
+              <div className="relative flex gap-8 pb-14 pl-9">
+                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
+                <div>
+                  <div className="font-display text-2xl font-bold text-text">2022 — 2023</div>
+                  <div className="mt-1.5 text-base font-semibold">Terminale STMG, spécialité SIG</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">CNED · Validé</div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Systèmes</div>
-              <div className="flex flex-col gap-6">
-                <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
-                  <h3 className="font-display text-xl font-bold">MinishellSE</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted">
-                    Mini-shell développé en C dans le cadre du projet final du cours de Systèmes d'Exploitation (IED Paris 8). Il intègre les commandes internes moncd, monexit et exit, la gestion des redirections d'entrée-sortie, des pipes, de l'exécution en arrière-plan, ainsi que l'auto-complétion des noms de fichiers en bonus.
-                  </p>
+              <div className="relative flex gap-8 pb-14 pl-9">
+                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
+                <div>
+                  <div className="font-display text-2xl font-bold text-text">2023 — 2025</div>
+                  <div className="mt-1.5 text-base font-semibold">BTS SIO, option SISR</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">Validé</div>
+                </div>
+              </div>
 
-                  <div className="mt-5 flex gap-6 font-mono text-xs">
-                    <a href="/downloads/MinishellSE.zip" download className="flex items-center gap-1.5 border-b border-accent pb-0.5 text-accent hover:opacity-70">
-                      <Download size={13} />
-                      Télécharger le projet
-                    </a>
-                  </div>
+              <div className="relative flex gap-8 pb-14 pl-9">
+                <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(127,168,201,0.5)]" />
+                <div>
+                  <div className="font-display text-3xl font-bold text-accent">2025 — 2026</div>
+                  <div className="mt-1.5 text-lg font-semibold">L2 Informatique — IED, Université Paris 8</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-accent">En cours</div>
+                </div>
+              </div>
 
-                  <details className="group mt-6 border-t border-line pt-5">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
-                      <span className="inline-block transition-transform group-open:rotate-90">▸</span>
-                      Lire le rapport du projet
-                    </summary>
-                    <div className="mt-4 clip-corner-sm border border-line">
-                      <iframe src="/pdf/minishellse-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport MinishellSE" />
-                    </div>
-                  </details>
+              <div className="relative flex gap-8 pb-14 pl-9 opacity-60">
+                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
+                <div>
+                  <div className="font-display text-2xl font-bold text-muted">Prochaine étape</div>
+                  <div className="mt-1.5 text-base font-semibold text-muted">L3 Informatique</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
+                </div>
+              </div>
+
+              <div className="relative flex gap-8 pl-9 opacity-60">
+                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
+                <div>
+                  <div className="font-display text-2xl font-bold text-muted">Ensuite</div>
+                  <div className="mt-1.5 text-base font-semibold text-muted">Master en Cybersécurité</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* COMPETENCES */}
-      <section id="competences" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-11 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">Compétences</h2>
-            <span className="h-px flex-1 bg-line" />
-          </div>
-
-          <div className="flex flex-col gap-10">
-            <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Langages</div>
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
-                {skillsLangages.map((s) => (
-                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
-                ))}
-              </div>
+        <section id="projets" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-11 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Projets</h2>
+              <span className="h-px flex-1 bg-line" />
+              <span className="font-mono text-[11px] text-muted">github.com/zl1326</span>
             </div>
 
-            <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils &amp; systèmes</div>
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-7">
-                {skillsOutils.map((s) => (
-                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils de développement</div>
-              <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
-                {skillsDeploiement.map((s) => (
-                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
-              <div className="grid grid-cols-3 gap-3">
-                {skillsSecurite.map((s) => (
-                  <SkillTile key={s.label} skill={s} onSelect={setSelected} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VEILLE */}
-      <section id="veille" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-3 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">Veille technologique</h2>
-            <span className="h-px flex-1 bg-line" />
-          </div>
-
-          {lastUpdate && (
-            <div className="mb-9 font-mono text-[11px] uppercase tracking-wide text-accent">
-              Dernière MAJ : {formatDateFr(lastUpdate)}
-            </div>
-          )}
-
-          {loadingArticles ? (
-            <p className="text-sm text-muted">Chargement des derniers articles...</p>
-          ) : articles.length === 0 ? (
-            <p className="text-sm text-muted">Aucun article disponible pour le moment.</p>
-          ) : (
-            <div className="flex flex-col">
-              {articles.map((article) => (
-                <ArticleRow key={article.id} article={article} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section id="contact" className="border-t border-line px-8 py-20">
-        <div className="mx-auto max-w-[1000px]">
-          <div className="mb-11 flex items-center gap-3.5">
-            <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
-            <h2 className="font-display text-xl font-bold">Contact</h2>
-            <span className="h-px flex-1 bg-line" />
-          </div>
-
-          <p className="mb-10 whitespace-nowrap text-base leading-relaxed text-muted">
-            N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de mon profil.
-          </p>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <a href="mailto:laidani.zakariya1326@gmail.com" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
-              <Mail size={22} className="flex-shrink-0 text-accent" />
-              <div className="min-w-0">
-                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Email</div>
-                <div className="mt-1 break-all text-sm">laidani.zakariya1326@gmail.com</div>
-              </div>
-            </a>
-
-            <a href="tel:+33744117699" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
-              <Phone size={22} className="flex-shrink-0 text-accent" />
+            <div className="flex flex-col gap-14">
               <div>
-                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Téléphone</div>
-                <div className="mt-1 text-sm">+33 7 44 11 76 99</div>
-              </div>
-            </a>
+                <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
+                <div className="flex flex-col gap-6">
+                  <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
+                    <h3 className="font-display text-xl font-bold">Log Sentinel</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">
+                      Outil Python d'analyse de logs et de détection d'intrusion. Il parse des logs SSH, Apache et pare-feu, applique des règles de détection (bruteforce, scan de ports, user-agents suspects, scan de chemins) et affiche les alertes sur un dashboard en temps réel.
+                    </p>
 
-            <a href="https://www.linkedin.com/in/zakariya-laidani-698b38427/" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
-              <span className="flex-shrink-0 text-accent"><LinkedinIcon size={22} /></span>
+                    <div className="mt-5 flex gap-6 font-mono text-xs">
+                      <a href="https://github.com/zl1326/log-sentinel" target="_blank" rel="noopener noreferrer" className="border-b border-accent pb-0.5 text-accent hover:opacity-70">Code source</a>
+                    </div>
+
+                    <details className="group mt-6 border-t border-line pt-5">
+                      <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
+                        <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                        Lire le rapport du projet
+                      </summary>
+                      <div className="mt-4 clip-corner-sm border border-line">
+                        <iframe src="/pdf/log-sentinel-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport Log Sentinel" />
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">LinkedIn</div>
-                <div className="mt-1 text-sm">Voir le profil</div>
+                <div className="mb-5 font-mono text-[11px] uppercase tracking-wide text-accent">Systèmes</div>
+                <div className="flex flex-col gap-6">
+                  <div className="clip-corner border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
+                    <h3 className="font-display text-xl font-bold">MinishellSE</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">
+                      Mini-shell développé en C dans le cadre du projet final du cours de Systèmes d'Exploitation (IED Paris 8). Il intègre les commandes internes moncd, monexit et exit, la gestion des redirections d'entrée-sortie, des pipes, de l'exécution en arrière-plan, ainsi que l'auto-complétion des noms de fichiers en bonus.
+                    </p>
+
+                    <div className="mt-5 flex gap-6 font-mono text-xs">
+                      <a href="/downloads/MinishellSE.zip" download className="flex items-center gap-1.5 border-b border-accent pb-0.5 text-accent hover:opacity-70">
+                        <Download size={13} />
+                        Télécharger le projet
+                      </a>
+                    </div>
+
+                    <details className="group mt-6 border-t border-line pt-5">
+                      <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
+                        <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                        Lire le rapport du projet
+                      </summary>
+                      <div className="mt-4 clip-corner-sm border border-line">
+                        <iframe src="/pdf/minishellse-rapport.pdf" className="h-[900px] w-full border-none" title="Rapport MinishellSE" />
+                      </div>
+                    </details>
+                  </div>
+                </div>
               </div>
-            </a>
-
-            <a href="https://github.com/zl1326" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
-              <span className="flex-shrink-0 text-accent"><GithubIcon size={22} /></span>
-              <div>
-                <div className="font-mono text-[10px] uppercase tracking-wide text-muted">GitHub</div>
-                <div className="mt-1 text-sm">Voir le profil</div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-line px-8 py-8">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-between font-mono text-xs text-muted">
-          <span>© 2026 Zakariya Laidani</span>
-          <span>Île-de-France</span>
-        </div>
-      </footer>
-
-      {/* MODALE DEFINITION COMPETENCE */}
-      {selected && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6"
-          onClick={() => setSelected(null)}
-        >
-          <div
-            className="clip-corner relative w-full max-w-[420px] border border-line bg-panel p-7"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelected(null)}
-              className="absolute right-4 top-4 text-muted hover:text-accent"
-              aria-label="Fermer"
-            >
-              <X size={18} />
-            </button>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl text-accent">{selected.icon}</span>
-              <h3 className="font-display text-xl font-bold">{selected.label}</h3>
             </div>
-            <div className="mt-3 font-mono text-[11px] uppercase tracking-wide text-accent">{selected.type}</div>
-            <p className="mt-4 text-sm leading-relaxed text-muted">{selected.definition}</p>
           </div>
-        </div>
-      )}
-    </main>
+        </section>
+
+        <section id="competences" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-11 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Compétences</h2>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+
+            <div className="flex flex-col gap-10">
+              <div>
+                <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Langages</div>
+                <div className="grid grid-cols-4 gap-3 sm:grid-cols-8">
+                  {skillsLangages.map((s) => (
+                    <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils &amp; systèmes</div>
+                <div className="grid grid-cols-4 gap-3 sm:grid-cols-7">
+                  {skillsOutils.map((s) => (
+                    <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Outils de développement</div>
+                <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
+                  {skillsDeploiement.map((s) => (
+                    <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-4 font-mono text-[11px] uppercase tracking-wide text-accent">Sécurité</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {skillsSecurite.map((s) => (
+                    <SkillTile key={s.label} skill={s} onSelect={setSelected} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="veille" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-3 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Veille technologique</h2>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+
+            {lastUpdate && (
+              <div className="mb-9 font-mono text-[11px] uppercase tracking-wide text-accent">
+                Dernière MAJ : {formatDateFr(lastUpdate)}
+              </div>
+            )}
+
+            {loadingArticles ? (
+              <p className="text-sm text-muted">Chargement des derniers articles...</p>
+            ) : articles.length === 0 ? (
+              <p className="text-sm text-muted">Aucun article disponible pour le moment.</p>
+            ) : (
+              <div className="flex flex-col">
+                {articles.map((article) => (
+                  <ArticleRow key={article.id} article={article} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section id="contact" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-11 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Contact</h2>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+
+            <p className="mb-10 whitespace-nowrap text-base leading-relaxed text-muted">
+              N&apos;hésitez pas à me contacter pour toute question, opportunité ou échange autour de mon profil.
+            </p>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <a href="mailto:laidani.zakariya1326@gmail.com" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+                <Mail size={22} className="flex-shrink-0 text-accent" />
+                <div className="min-w-0">
+                  <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Email</div>
+                  <div className="mt-1 break-all text-sm">laidani.zakariya1326@gmail.com</div>
+                </div>
+              </a>
+
+              <a href="tel:+33744117699" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+                <Phone size={22} className="flex-shrink-0 text-accent" />
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-wide text-muted">Téléphone</div>
+                  <div className="mt-1 text-sm">+33 7 44 11 76 99</div>
+                </div>
+              </a>
+
+              <a href="https://www.linkedin.com/in/zakariya-laidani-698b38427/" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+                <span className="flex-shrink-0 text-accent"><LinkedinIcon size={22} /></span>
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-wide text-muted">LinkedIn</div>
+                  <div className="mt-1 text-sm">Voir le profil</div>
+                </div>
+              </a>
+
+              <a href="https://github.com/zl1326" target="_blank" rel="noopener noreferrer" className="clip-corner-sm flex items-center gap-3 border border-line bg-panel px-6 py-6 transition-colors hover:border-accent">
+                <span className="flex-shrink-0 text-accent"><GithubIcon size={22} /></span>
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-wide text-muted">GitHub</div>
+                  <div className="mt-1 text-sm">Voir le profil</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <footer className="border-t border-line px-8 py-8">
+          <div className="mx-auto flex max-w-[1000px] items-center justify-between font-mono text-xs text-muted">
+            <span>© 2026 Zakariya Laidani</span>
+            <span>Île-de-France</span>
+          </div>
+        </footer>
+
+        {selected && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6" onClick={() => setSelected(null)}>
+            <div className="clip-corner relative w-full max-w-[420px] border border-line bg-panel p-7" onClick={(e) => e.stopPropagation()}>
+              <button onClick={() => setSelected(null)} className="absolute right-4 top-4 text-muted hover:text-accent" aria-label="Fermer">
+                <X size={18} />
+              </button>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl text-accent">{selected.icon}</span>
+                <h3 className="font-display text-xl font-bold">{selected.label}</h3>
+              </div>
+              <div className="mt-3 font-mono text-[11px] uppercase tracking-wide text-accent">{selected.type}</div>
+              <p className="mt-4 text-sm leading-relaxed text-muted">{selected.definition}</p>
+            </div>
+          </div>
+        )}
+      </main>
+    </>
   );
 }
