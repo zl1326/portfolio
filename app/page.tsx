@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { SiPython, SiPhp, SiJavascript, SiHtml5, SiCss, SiLinux, SiVirtualbox, SiMysql, SiMariadb } from "react-icons/si";
-import { Cpu, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink, FileCode, Download, User, History, FolderGit2, SlidersHorizontal } from "lucide-react";
+import { Cpu, Award, Coffee, Database, Network, Boxes, HardDrive, FileSearch, ShieldAlert, Radar, X, Mail, Phone, GitBranch, Zap, Code2, ExternalLink, FileCode, Download, User, History, FolderGit2, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
@@ -50,6 +50,7 @@ const navItems = [
   { href: "#parcours", label: "Parcours", icon: History },
   { href: "#projets", label: "Projets", icon: FolderGit2 },
   { href: "#competences", label: "Compétences", icon: SlidersHorizontal },
+    { href: "#certifications", label: "Certifications", icon: Award },
   { href: "#veille", label: "Veille", icon: Radar },
   { href: "#contact", label: "Contact", icon: Mail },
 ];
@@ -164,6 +165,34 @@ function formatDateFr(dateStr: string) {
   });
 }
 
+type Certification = {
+  title: string;
+  issuer: string;
+  date: string;
+  badge: string;
+  description: string;
+  pdf: string;
+};
+
+const certifications: Certification[] = [
+  {
+    title: "EF SET English Certificate",
+    issuer: "EF Standard English Test",
+    date: "Octobre 2026",
+    badge: "C1 Avancé · 62/100",
+    description: "Test d'anglais standardisé évaluant la compréhension écrite et orale. Niveau global C1 sur l'échelle européenne du CECRL, avec un niveau C2 en lecture et B2 en écoute.",
+    pdf: "/certificats/EF_SET_Certificate.pdf",
+  },
+  {
+    title: "Developing Secure Software (LFD121)",
+    issuer: "The Linux Foundation · OpenSSF",
+    date: "Novembre 2026",
+    badge: "Complétée",
+    description: "Formation de la Linux Foundation et de l'Open Source Security Foundation consacrée aux bonnes pratiques pour concevoir, développer et vérifier des logiciels sécurisés.",
+    pdf: "/certificats/LFD121.pdf",
+  },
+];
+
 export default function Home() {
   const [selected, setSelected] = useState<Skill | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -216,7 +245,7 @@ export default function Home() {
             <span className="font-normal text-muted">orienté systèmes et sécurité.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-[500px] text-base leading-relaxed text-muted">
-            L2 Informatique à l'Université Paris 8, dans le cadre d'une formation visant, sur le long terme, une carrière en cybersécurité.
+            L3 Informatique à l'Université Paris 8, dans le cadre d'une formation visant, sur le long terme, une carrière en cybersécurité.
           </p>
           <div className="mt-9 flex justify-center gap-3.5">
             <a href="/cv.pdf" className="clip-corner bg-accent px-7 py-3.5 font-semibold text-bg">Télécharger le CV</a>
@@ -233,7 +262,7 @@ export default function Home() {
             </div>
 
             <p className="max-w-[720px] text-base leading-relaxed text-muted">
-              Je suis étudiant en informatique en Île-de-France, en L2 après avoir validé un BTS SIO option SISR. Mon intérêt pour la cybersécurité est né d'une expérience concrète, car en construisant et en dépannant mes propres machines, j'ai appris à chercher les causes profondes des problèmes plutôt que de me contenter de solutions superficielles. C'est cette même approche que j'applique à mes projets, avec l'ambition, à terme, de devenir responsable de la sécurité des systèmes d'information.
+              Je suis étudiant en informatique en Île-de-France, en L3 après avoir validé un BTS SIO option SISR et une L2. Mon intérêt pour la cybersécurité est né d'une expérience concrète, car en construisant et en dépannant mes propres machines, j'ai appris à chercher les causes profondes des problèmes plutôt que de me contenter de solutions superficielles. C'est cette même approche que j'applique à mes projets, avec l'ambition, à terme, de devenir responsable de la sécurité des systèmes d'information.
             </p>
           </div>
         </section>
@@ -255,7 +284,7 @@ export default function Home() {
               <span className="h-[3px] flex-1 bg-accent" />
               <span className="h-[3px] flex-1 bg-accent" />
               <span className="h-[3px] flex-1 bg-accent" />
-              <span className="h-[3px] flex-1 bg-line" />
+              <span className="h-[3px] flex-1 bg-accent" />
               <span className="h-[3px] flex-1 bg-line" />
             </div>
 
@@ -280,21 +309,21 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="relative flex gap-8 pb-14 pl-9">
-                <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(127,168,201,0.5)]" />
+                            <div className="relative flex gap-8 pb-14 pl-9">
+                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-steel bg-bg" />
                 <div>
-                  <div className="font-display text-3xl font-bold text-accent">2025 — 2026</div>
-                  <div className="mt-1.5 text-lg font-semibold">L2 Informatique — IED, Université Paris 8</div>
-                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-accent">En cours</div>
+                  <div className="font-display text-2xl font-bold text-text">2025 — 2026</div>
+                  <div className="mt-1.5 text-base font-semibold">L2 Informatique — IED, Université Paris 8</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">Validée</div>
                 </div>
               </div>
 
-              <div className="relative flex gap-8 pb-14 pl-9 opacity-60">
-                <span className="absolute left-0 top-1.5 h-[17px] w-[17px] rotate-45 border-2 border-dashed border-line bg-bg" />
+              <div className="relative flex gap-8 pb-14 pl-9">
+                <span className="absolute left-[-3px] top-0 h-[23px] w-[23px] rotate-45 border-2 border-accent bg-accent shadow-[0_0_20px_rgba(127,168,201,0.5)]" />
                 <div>
-                  <div className="font-display text-2xl font-bold text-muted">Prochaine étape</div>
-                  <div className="mt-1.5 text-base font-semibold text-muted">L3 Informatique</div>
-                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
+                  <div className="font-display text-3xl font-bold text-accent">2026 — 2027</div>
+                  <div className="mt-1.5 text-lg font-semibold">L3 Informatique</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-accent">En cours</div>
                 </div>
               </div>
 
@@ -303,7 +332,7 @@ export default function Home() {
                 <div>
                   <div className="font-display text-2xl font-bold text-muted">Ensuite</div>
                   <div className="mt-1.5 text-base font-semibold text-muted">Master en Cybersécurité</div>
-                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">À venir</div>
+                  <div className="mt-1 font-mono text-[11px] uppercase tracking-wide text-muted">Prochaine étape</div>
                 </div>
               </div>
             </div>
@@ -422,6 +451,41 @@ export default function Home() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+        
+                <section id="certifications" className="border-t border-line px-8 py-20">
+          <div className="mx-auto max-w-[1000px]">
+            <div className="mb-11 flex items-center gap-3.5">
+              <span className="h-2.5 w-2.5 flex-shrink-0 bg-accent clip-corner-sm" />
+              <h2 className="font-display text-xl font-bold">Certifications</h2>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+
+                        <div className="grid items-start gap-6 sm:grid-cols-2">
+              {certifications.map((c) => (
+                <div key={c.title} className="clip-corner flex flex-col border border-line bg-panel p-7 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-[0_8px_20px_rgba(127,168,201,0.12)]">
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="text-accent"><Award size={26} /></span>
+                    <span className="font-mono text-[11px] uppercase tracking-wide text-accent">{c.date}</span>
+                  </div>
+                  <h3 className="mt-5 font-display text-xl font-bold">{c.title}</h3>
+                  <div className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-muted">{c.issuer}</div>
+                  <span className="clip-corner-sm mt-4 inline-block self-start border border-accent px-3 py-1 font-mono text-[11px] text-accent">{c.badge}</span>
+                  <p className="mt-4 text-sm leading-relaxed text-muted">{c.description}</p>
+
+                  <details className="group mt-6 border-t border-line pt-5">
+                    <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-wide text-muted hover:text-accent">
+                      <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+                      Voir le certificat
+                    </summary>
+                    <div className="mt-4 clip-corner-sm border border-line">
+                      <iframe src={c.pdf + "#view=FitH&toolbar=0"} className="h-[380px] w-full border-none" title={"Certificat " + c.title} />
+                    </div>
+                  </details>
+                </div>
+              ))}
             </div>
           </div>
         </section>
